@@ -100,7 +100,7 @@ st.title("SAAR -sinistres-ia — Par Romuald MBANA pour la Société Africaine d
 st.caption(
     "Assistant d'analyse de contrats et de pré-validation des sinistres conçu par MBANA MEDJO Romuald Arthur, "
     "démonstration pour évaluation par le jury de mes compétence d'agentique IA et d'analyste de données — voir la note de "
-    "confidentialité dans la barre latérale."
+    "confidentialité dans la barre latérale"
 )
 st.warning(
     "🧪 **AVIS AUX MEMBRES DU JURY** : n'utilisez pas de véritables données sensibles de l'entreprise sur cette plateforme de test par souci de confidentilité de données "

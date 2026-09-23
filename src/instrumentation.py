@@ -40,7 +40,7 @@ def _get_or_create(metric_cls, name: str, documentation: str, labelnames=(), **k
     """Crée une métrique Prometheus, ou réutilise celle déjà enregistrée.
 
     Streamlit peut réexécuter ce module dans le même processus (redémarrage
-    de l'app, reprise après erreur...) sans repartir d'un interpréteur
+    de l'app, reprise après erreur....) sans repartir d'un interpréteur
     Python neuf. Sans ce garde-fou, une seconde exécution tenterait de
     recréer une métrique du même nom et `prometheus_client` lèverait une
     exception `DuplicateTimeseries`. On vérifie donc d'abord si la
