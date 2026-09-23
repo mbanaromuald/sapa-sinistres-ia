@@ -96,7 +96,7 @@ with st.sidebar:
         else:
             st.caption("Aucune action enregistrée pour le moment.")
 
-st.title("SAAR -sinistres-ia — Cloud Edition")
+st.title("SAAR -sinistres-ia — Par Romuald MBANA pour la Société Africaine d'Assurance et de Reassurance")
 st.caption(
     "Assistant d'analyse de contrats et de pré-validation des sinistres conçu par MBANA MEDJO Romuald Arthur, "
     "démonstration pour évaluation par le jury de mes compétence d'agentique IA et d'analyste de données — voir la note de "

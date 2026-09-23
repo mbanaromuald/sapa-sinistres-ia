@@ -28,39 +28,62 @@ Prometheus et Grafana à partir de ces métriques.
 """
 import threading
 
-from prometheus_client import Counter, Gauge, Histogram, start_http_server
+from prometheus_client import REGISTRY, Counter, Gauge, Histogram, start_http_server
 
 from src.config import PROMETHEUS_PORT
 
 _lock = threading.Lock()
 _server_started = False
 
-REQUEST_COUNTER = Counter(
+
+def _get_or_create(metric_cls, name: str, documentation: str, labelnames=(), **kwargs):
+    """Crée une métrique Prometheus, ou réutilise celle déjà enregistrée.
+
+    Streamlit peut réexécuter ce module dans le même processus (redémarrage
+    de l'app, reprise après erreur...) sans repartir d'un interpréteur
+    Python neuf. Sans ce garde-fou, une seconde exécution tenterait de
+    recréer une métrique du même nom et `prometheus_client` lèverait une
+    exception `DuplicateTimeseries`. On vérifie donc d'abord si la
+    métrique existe déjà dans le registre par défaut, et on la réutilise
+    le cas échéant plutôt que d'en recréer une.
+    """
+    existing = REGISTRY._names_to_collectors.get(name)  # noqa: SLF001
+    if existing is not None:
+        return existing
+    return metric_cls(name, documentation, labelnames, **kwargs)
+
+
+REQUEST_COUNTER = _get_or_create(
+    Counter,
     "saar_requests_total",
     "Nombre total de requêtes traitées, par fonctionnalité et par statut",
     ["fonctionnalite", "statut"],
 )
 
-LATENCY_HISTOGRAM = Histogram(
+LATENCY_HISTOGRAM = _get_or_create(
+    Histogram,
     "saar_request_duration_seconds",
     "Durée de traitement (bout en bout) par fonctionnalité, en secondes",
     ["fonctionnalite"],
     buckets=(0.25, 0.5, 1, 2, 3, 5, 8, 13, 21, 34),
 )
 
-GROQ_CALLS_COUNTER = Counter(
+GROQ_CALLS_COUNTER = _get_or_create(
+    Counter,
     "saar_groq_api_calls_total",
     "Nombre d'appels sortants vers l'API Groq Cloud, par fonctionnalité et statut",
     ["fonctionnalite", "statut"],
 )
 
-EXTRACTION_VALIDATION_COUNTER = Counter(
+EXTRACTION_VALIDATION_COUNTER = _get_or_create(
+    Counter,
     "saar_extraction_validation_total",
     "Résultat de la validation Pydantic des extractions de sinistres",
     ["resultat"],
 )
 
-VECTORSTORE_DOCS_GAUGE = Gauge(
+VECTORSTORE_DOCS_GAUGE = _get_or_create(
+    Gauge,
     "saar_vectorstore_documents",
     "Nombre de fragments actuellement indexés dans ChromaDB (in-memory)",
 )
