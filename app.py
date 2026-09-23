@@ -30,13 +30,13 @@ from src.underwriting_agent import (
 )
 from src.utils import format_fcfa, read_recent_logs
 
-st.set_page_config(page_title="SAAR Local-Insight AI — Cloud Edition", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="Agent-saar-sinistres-ia — Par Romuald MBANA Pour la Société Africaine d'Assurance et de Reassurance", page_icon="🛡️", layout="wide")
 
 # Démarre le serveur de métriques Prometheus (une seule fois par processus).
 start_metrics_server(PROMETHEUS_PORT)
 
 
-@st.cache_resource(show_spinner="Indexation des documents en mémoire (ChromaDB)…")
+@st.cache_resource(show_spinner="Indexation des documents en mémoire avec (ChromaDB)…")
 def _cached_vectorstore(_version: int):
     return build_vectorstore_in_memory(CONTRATS_DIR)
 
@@ -50,8 +50,8 @@ vectordb, ingestion_report = _cached_vectorstore(st.session_state["vs_version"])
 # Barre latérale
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("## 🛡️ SAAR Local-Insight AI")
-    st.caption("Claims & Underwriting Copilot — Cloud Edition (démo en ligne)")
+    st.markdown("## 🛡️ SAAR Agent-saar-sinistres-ia")
+    st.caption("Aux membre du jury, ceci est une (démo en ligne)")
 
     st.divider()
     st.markdown("### ⚙️ Configuration active")
@@ -96,17 +96,16 @@ with st.sidebar:
         else:
             st.caption("Aucune action enregistrée pour le moment.")
 
-st.title("SAAR Local-Insight AI — Cloud Edition")
+st.title("SAAR -sinistres-ia — Cloud Edition")
 st.caption(
-    "Assistant d'analyse de contrats et de pré-validation des sinistres, "
-    "propulsé par Groq Cloud API + ChromaDB (en mémoire). Édition de "
-    "démonstration pour évaluation par le jury — voir la note de "
+    "Assistant d'analyse de contrats et de pré-validation des sinistres conçu par MBANA MEDJO Romuald Arthur, "
+    "démonstration pour évaluation par le jury de mes compétence d'agentique IA et d'analyste de données — voir la note de "
     "confidentialité dans la barre latérale."
 )
 st.warning(
-    "🧪 **Instance de démonstration** : n'utilisez jamais de véritables données "
+    "🧪 **AVIS AUX MEMBRES DU JURY** : n'utilisez pas de véritables données sensibles de l'entreprise sur cette plateforme de test par souci de confidentilité de données "
     "personnelles d'assurés dans cette instance publique. Elle est destinée à "
-    "l'évaluation fonctionnelle du copilote, avec des documents et données "
+    "l'évaluation fonctionnelle de l'application, avec des documents et données "
     "fictifs uniquement.",
     icon="🧪",
 )
