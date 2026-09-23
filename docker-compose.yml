@@ -1,0 +1,73 @@
+version: "3.9"
+
+# ---------------------------------------------------------------------------
+# Pile complète pour la démonstration LOCALE avec observabilité :
+#   - app         : Streamlit + LangChain + Groq Cloud API + ChromaDB (mémoire)
+#   - prometheus  : collecte des métriques exposées par "app" sur le port 9100
+#   - grafana     : visualisation des métriques (dashboard préconfiguré)
+#
+# Sur Hugging Face Spaces, seul le service "app" est déployé (voir le
+# MANUEL_UTILISATION.md, section 5) : Prometheus/Grafana sont prévus pour un
+# usage local ou sur votre propre serveur, car HF Spaces n'expose qu'un seul
+# port public par Space.
+# ---------------------------------------------------------------------------
+
+services:
+  app:
+    build: .
+    container_name: saar_app
+    ports:
+      - "8501:8501"   # Interface Streamlit
+      - "9100:9100"   # Endpoint /metrics (Prometheus)
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
+      - EMBED_MODEL=${EMBED_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+      - PROMETHEUS_PORT=9100
+      - APP_ENV=docker-compose
+    volumes:
+      - ./data:/app/data
+    networks:
+      - saar_net
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: saar_prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    networks:
+      - saar_net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: saar_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - saar_net
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  saar_net:
+    driver: bridge

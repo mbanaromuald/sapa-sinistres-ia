@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "saar_app"
+    static_configs:
+      - targets: ["app:9100"]
+        labels:
+          application: "saar-local-insight-ai"
+          environnement: "demo-entretien-sapa"

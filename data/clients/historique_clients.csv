@@ -1,0 +1,6 @@
+id_client,nom,produit,anciennete_annees,nb_sinistres_3ans,zone_risque,profession,age_bien_annees,impayes
+CL-1001,Jean MBALLA,SAAR Auto,4,1,Urbaine standard,Cadre,3,Non
+CL-1002,Alice EKANI,SAAR Habitation,2,0,Zone inondable,Enseignante,10,Non
+CL-1003,Paul ATEBA,SAAR Auto,1,2,Urbaine standard,Chauffeur professionnel,7,Oui
+CL-1004,Sarah NGONO,SAAR Habitation,6,0,Urbaine standard,Médecin,2,Non
+CL-1005,Marc FOTSO,SAAR Auto,0,0,Zone inondable,Commerçant,12,Non

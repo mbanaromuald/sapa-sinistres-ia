@@ -1,0 +1,135 @@
+{
+  "title": "SAAR Local-Insight AI — Vue d'ensemble",
+  "uid": "saar-overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-30m", "to": "now" },
+  "tags": ["saar", "assurance", "ia"],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Requêtes traitées par fonctionnalité (par seconde)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (fonctionnalite) (rate(saar_requests_total[1m]))",
+          "legendFormat": "{{fonctionnalite}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Latence p95 par fonctionnalité (secondes)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, fonctionnalite) (rate(saar_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{fonctionnalite}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Taux d'erreur global (5 min)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "orange", "value": 0.05 },
+              { "color": "red", "value": 0.15 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(saar_requests_total{statut=\"erreur\"}[5m])) / clamp_min(sum(rate(saar_requests_total[5m])), 1e-9)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Appels à l'API Groq Cloud (total cumulé)",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 8 },
+      "targets": [
+        { "expr": "sum(saar_groq_api_calls_total)", "refId": "A" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Taux de succès de validation Pydantic (extraction)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "orange", "value": 0.7 },
+              { "color": "green", "value": 0.9 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(saar_extraction_validation_total{resultat=\"succes\"}) / clamp_min(sum(saar_extraction_validation_total), 1e-9)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Fragments indexés dans ChromaDB (in-memory)",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "targets": [
+        { "expr": "saar_vectorstore_documents", "refId": "A" }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Répartition des requêtes par statut (empilé)",
+      "type": "barchart",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum by (fonctionnalite, statut) (increase(saar_requests_total[15m]))",
+          "legendFormat": "{{fonctionnalite}} - {{statut}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Débit d'appels Groq par fonctionnalité et statut",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum by (fonctionnalite, statut) (rate(saar_groq_api_calls_total[1m]))",
+          "legendFormat": "{{fonctionnalite}} - {{statut}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}
