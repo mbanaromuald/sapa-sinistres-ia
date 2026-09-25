@@ -1,3 +1,5 @@
+La solution peut être testée via ce lien https://sapa-sinistres-ia-fkd5anxyy3q2jwtlaa6sp4.streamlit.app/
+
 ---
 title: SAAR Local-Insight AI - Cloud Demo
 emoji: 🛡️
